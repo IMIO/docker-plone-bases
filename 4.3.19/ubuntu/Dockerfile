@@ -29,7 +29,7 @@ RUN apt-get update \
   && pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT \
   && su -c "buildout -t 30 -N" -s /bin/sh imio
 
-FROM imiobe/base:py2-ubuntu-16.04
+FROM imiobe/base:py2-ubuntu-18.04
 ENV PIP=9.0.3 \
   ZC_BUILDOUT=2.11.3 \
   SETUPTOOLS=38.7.0
