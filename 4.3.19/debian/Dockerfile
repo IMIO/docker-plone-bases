@@ -31,8 +31,8 @@ RUN apt-get update \
 
 FROM imiobe/base:py2-debian-buster
 ENV PIP=9.0.3 \
-  ZC_BUILDOUT=2.11.3 \
-  SETUPTOOLS=38.7.0
+    ZC_BUILDOUT=2.13.1 \
+    SETUPTOOLS=40.8.0
 
 RUN mkdir -p /plone /data /data/blobstorage /data/filestorage
 RUN chown imio:imio -R /plone \
