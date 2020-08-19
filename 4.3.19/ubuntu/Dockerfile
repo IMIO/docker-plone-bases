@@ -18,7 +18,7 @@ WORKDIR /plone
 RUN apt-get update \
   && buildDeps="python-pip build-essential libpq-dev libreadline-dev wget git gcc libc6-dev libpcre3-dev libssl-dev libxml2-dev libxslt1-dev libbz2-dev libffi-dev libjpeg62-dev libopenjp2-7-dev zlib1g-dev libwebp-dev python-dev" \
   && apt-get install -y --no-install-recommends $buildDeps \
-  && wget -O Plone.tgz https://launchpad.net/plone/$PLONE_MAJOR/$PLONE_VERSION/+download/Plone-$PLONE_VERSION-UnifiedInstaller.tgz \
+  && wget -nv -O Plone.tgz https://launchpad.net/plone/$PLONE_MAJOR/$PLONE_VERSION/+download/Plone-$PLONE_VERSION-UnifiedInstaller.tgz \
   && echo "$PLONE_MD5 Plone.tgz" | md5sum -c - \
   && tar -xzf Plone.tgz \
   && tar -xf Plone-$PLONE_VERSION-UnifiedInstaller/packages/buildout-cache.tar.bz2 \
