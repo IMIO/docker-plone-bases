@@ -1,11 +1,7 @@
 FROM imiobe/base:py2-ubuntu-20.04 as builder
 
 ENV PIP=20.2.2 \
-    ZC_BUILDOUT=2.13.1 \
-    SETUPTOOLS=40.8.0 \
-    PLONE_MAJOR=4.3 \
-    PLONE_VERSION=4.3.19 \
-    PLONE_MD5=04ed5beac7fb8504f06a36d44e407b06
+    PLONE_VERSION=4.3.20
 
 LABEL plone=$PLONE_VERSION \
     name="Plone 4.3" \
@@ -38,22 +34,15 @@ RUN apt-get update -qqy \
         libwebp-dev" \
   && apt-get install -qqy --no-install-recommends $buildDeps \
   && rm -rf /var/lib/apt/lists/* \
-  && wget -nv -O Plone.tgz https://launchpad.net/plone/$PLONE_MAJOR/$PLONE_VERSION/+download/Plone-$PLONE_VERSION-UnifiedInstaller.tgz \
-  && echo "$PLONE_MD5 Plone.tgz" | md5sum -c - \
-  && tar -xzf Plone.tgz \
-  && tar -xf Plone-$PLONE_VERSION-UnifiedInstaller/packages/buildout-cache.tar.bz2 \
+  && wget -nv https://dist.plone.org/release/$PLONE_VERSION/requirements.txt \
+  && wget -nv https://dist.plone.org/release/$PLONE_VERSION/versions.cfg \
   && chown imio:imio -R /plone \
   && chown imio:imio -R /data \
-  && mv buildout-cache/eggs . \
-  && mv buildout-cache/downloads . \
-  && su -c "virtualenv -p python2.7 ." -s /bin/sh imio \
-  && su -c "bin/pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT" -s /bin/sh imio \
-  && su -c "bin/buildout -t 30 -N" -s /bin/sh imio
+  && pip install pip==$PIP -r requirements.txt \
+  && su -c "buildout -t 30 -N" -s /bin/sh imio
 
 FROM imiobe/base:py2-ubuntu-20.04
-ENV PIP=20.2.2 \
-    ZC_BUILDOUT=2.11.3 \
-    SETUPTOOLS=40.8.0
+ENV PIP=20.2.2
 
 RUN mkdir -p /plone /data /data/blobstorage /data/filestorage
 RUN chown imio:imio -R /plone \
