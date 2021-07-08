@@ -21,14 +21,20 @@ RUN buildDeps="build-base wget git gcc libc-dev zlib-dev libjpeg-turbo-dev libpn
   && su -c "buildout -t 30 -N" -s /bin/sh imio
 
 FROM imiobe/base:py3-alpine
-
-RUN mkdir -p /plone /data /data/blobstorage /data/filestorage
-RUN chown imio:imio -R /plone \
-  && chown imio:imio -R /data
-
-WORKDIR /plone
-
-COPY --chown=imio --from=builder /plone/eggs eggs
+COPY --chown=imio --from=builder /plone/eggs /plone/eggs
 COPY --from=builder /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
-RUN find /data -not -user imio -exec chown imio:imio {} \+ \
- && find /plone -not -user imio -exec chown imio:imio {} \+  \
+WORKDIR /plone
+RUN apk add --no-cache --virtual .run-deps \
+  bash \
+  rsync \
+  libxml2 \
+  libxslt \
+  libpng \
+  libjpeg-turbo\
+  libwebp \
+  openjpeg \
+  && mkdir -p /data /data/blobstorage /data/filestorage \
+  && chown imio:imio -R /plone \
+  && chown imio:imio -R /data \
+  && find /data -not -user imio -exec chown imio:imio {} \+ \
+  && find /plone -not -user imio -exec chown imio:imio {} \+

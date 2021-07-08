@@ -45,14 +45,22 @@ RUN apt-get update -qqy \
 
 FROM imiobe/base:py2-ubuntu-20.04
 ENV PIP=20.2.2
-
-RUN mkdir -p /plone /data /data/blobstorage /data/filestorage
-RUN chown imio:imio -R /plone \
-  && chown imio:imio -R /data
-
-WORKDIR /plone
-
-COPY --chown=imio --from=builder /plone/eggs eggs
+COPY --chown=imio --from=builder /plone/eggs /plone/eggs
 COPY --from=builder /usr/local/lib/python2.7/dist-packages /usr/local/lib/python2.7/dist-packages
-RUN find /data -not -user imio -exec chown imio:imio {} \+ \
- && find /plone -not -user imio -exec chown imio:imio {} \+  \
+WORKDIR /plone
+RUN apt-get update \
+  && apt-get install -qqy --no-install-recommends \
+  python2 \
+  libxml2 \
+  libxslt1.1 \
+  libpng16-16 \
+  libjpeg62 \
+  libwebp6 \
+  libopenjp2-7 \
+  libtiff5 \
+  poppler-utils \
+ && mkdir -p /data /data/blobstorage /data/filestorage \
+ && chown imio:imio -R /plone \
+ && chown imio:imio -R /data \
+ && find /data -not -user imio -exec chown imio:imio {} \+ \
+ && find /plone -not -user imio -exec chown imio:imio {} \+
