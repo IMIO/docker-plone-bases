@@ -3,7 +3,7 @@ on:
   push:
     branches: [ master ]
   schedule:
-    - cron: '0 2 * * *' # Weekly on Sundays at 02:00
+    - cron: '0 3 * * *' # Weekly on Sundays at 03:00
 jobs:
   debian_4_3_20_py2:
     runs-on: ubuntu-latest
