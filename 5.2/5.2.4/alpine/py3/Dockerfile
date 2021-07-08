@@ -14,15 +14,17 @@ WORKDIR /plone
 RUN buildDeps="build-base wget git gcc libc-dev zlib-dev libjpeg-turbo-dev libpng-dev libxml2-dev libxslt-dev pcre-dev libffi-dev postgresql-dev pcre-dev libbz2 openjpeg-dev libwebp-dev bzip2-dev" \
   && apk add --no-cache --virtual $buildDeps \
   && wget -nv https://dist.plone.org/release/$PLONE_VERSION/requirements.txt \
+  && echo "pip==$PIP" | cat - requirements.txt >> tmp.txt \
+  && mv tmp.txt requirements.txt \
   && wget -nv https://dist.plone.org/release/$PLONE_VERSION/versions.cfg \
   && chown imio:imio -R /plone \
   && chown imio:imio -R /data \
-  && pip install pip==$PIP -r requirements.txt \
+  && pip install -r requirements.txt \
   && su -c "buildout -t 30 -N" -s /bin/sh imio
 
 FROM imiobe/base:py3-alpine
+COPY --chown=imio --from=builder /plone/requirements.txt /plone/
 COPY --chown=imio --from=builder /plone/eggs /plone/eggs
-COPY --from=builder /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
 WORKDIR /plone
 RUN apk add --no-cache --virtual .run-deps \
   bash \
@@ -33,6 +35,7 @@ RUN apk add --no-cache --virtual .run-deps \
   libjpeg-turbo\
   libwebp \
   openjpeg \
+  && pip install -r requirements.txt \
   && mkdir -p /data /data/blobstorage /data/filestorage \
   && chown imio:imio -R /plone \
   && chown imio:imio -R /data \
