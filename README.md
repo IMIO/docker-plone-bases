@@ -7,6 +7,9 @@ The name of image is `imiobe/plone/base` and we use different tag.
 We use `imiobe/base` (https://github.com/IMIO/docker-bases) images as parent.
 
 ## Tags
++ 4.3.20-ubuntu
++ 4.3.20-debian
++ 5.2.4-alpine
 
 
 ## Images
