@@ -1,7 +1,9 @@
 FROM imiobe/base:py2-ubuntu-20.04 as builder
 
 ENV PIP=20.2.2 \
-    PLONE_VERSION=4.3.20
+    PLONE_VERSION=4.3.20 \
+    ZC_BUILDOUT=2.13.1 \
+    SETUPTOOLS=40.8.0
 
 LABEL plone=$PLONE_VERSION \
     name="Plone 4.3" \
@@ -9,14 +11,14 @@ LABEL plone=$PLONE_VERSION \
     maintainer="iMio"
 
 RUN mkdir -p /plone /data /data/blobstorage /data/filestorage
-COPY buildout.cfg /plone
+COPY buildout.cfg versions-py2.cfg /plone/
 WORKDIR /plone
 RUN apt-get update -qqy \
   && buildDeps="build-essential \
         wget \
         git \
         gcc \
-        python2.7-dev \
+        python2-dev \
         virtualenv \
         libpq-dev \
         libreadline-dev \
@@ -34,12 +36,12 @@ RUN apt-get update -qqy \
         libwebp-dev" \
   && apt-get install -qqy --no-install-recommends $buildDeps \
   && rm -rf /var/lib/apt/lists/* \
-  && wget -nv https://dist.plone.org/release/$PLONE_VERSION/requirements.txt \
-  && wget -nv https://dist.plone.org/release/$PLONE_VERSION/versions.cfg \
+  && sed -ie "s#versions-plone.cfg#https://dist.plone.org/release/$PLONE_VERSION/versions.cfg#" buildout.cfg \
   && chown imio:imio -R /plone \
   && chown imio:imio -R /data \
-  && pip install pip==$PIP -r requirements.txt \
-  && su -c "buildout -t 30 -N" -s /bin/sh imio
+  && su -c "virtualenv -p python2 ." -s /bin/sh imio \
+  && su -c "bin/pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT" -s /bin/sh imio \
+  && su -c "bin/buildout -t 30 -N" -s /bin/sh imio
 
 FROM imiobe/base:py2-ubuntu-20.04
 ENV PIP=20.2.2

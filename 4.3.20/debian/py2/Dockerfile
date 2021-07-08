@@ -1,7 +1,9 @@
 FROM imiobe/base:py2-debian-buster as builder
 
 ENV PIP=20.2.2 \
-    PLONE_VERSION=4.3.20
+    PLONE_VERSION=4.3.20 \
+    ZC_BUILDOUT=2.13.1 \
+    SETUPTOOLS=40.8.0
 
 LABEL plone=$PLONE_VERSION \
     name="Plone 4.3" \
@@ -9,17 +11,35 @@ LABEL plone=$PLONE_VERSION \
     maintainer="iMio"
 
 RUN mkdir -p /plone /data /data/blobstorage /data/filestorage
-COPY buildout.cfg /plone
+COPY buildout.cfg versions-py2.cfg /plone/
 WORKDIR /plone
 RUN apt-get update \
-  && buildDeps="python-pip libpq-dev libreadline-dev wget git gcc libc6-dev libpcre3-dev libssl-dev libxml2-dev libxslt1-dev libbz2-dev libffi-dev libjpeg62-turbo-dev libopenjp2-7-dev zlib1g-dev libwebp-dev lbzip2" \
+  && buildDeps="build-essential \
+                python2-dev \
+                python-pip \
+                libpq-dev \
+                libreadline-dev \
+                wget \
+                git \
+                gcc \
+                libc6-dev \
+                libpcre3-dev \
+                libssl-dev \
+                libxml2-dev \
+                libxslt1-dev \
+                libbz2-dev \
+                libffi-dev \
+                libjpeg62-turbo-dev \
+                libopenjp2-7-dev \
+                zlib1g-dev \
+                libwebp-dev \
+                lbzip2" \
   && apt-get install -y --no-install-recommends $buildDeps \
-  && wget -nv https://dist.plone.org/release/$PLONE_VERSION/requirements.txt \
-  && wget -nv https://dist.plone.org/release/$PLONE_VERSION/versions.cfg \
+  && sed -ie "s#versions-plone.cfg#https://dist.plone.org/release/$PLONE_VERSION/versions.cfg#" buildout.cfg \
   && chown imio:imio -R /plone \
   && chown imio:imio -R /data \
-  && pip install pip==$PIP -r requirements.txt \
-  && su -c "buildout -t 30 -N" -s /bin/sh imio
+  && pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT \
+  && su -c "buildout -t 30 -N" -s /bin/bash imio
 
 FROM imiobe/base:py2-debian-buster
 ENV PIP=20.2.2
