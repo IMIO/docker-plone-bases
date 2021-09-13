@@ -16,6 +16,7 @@ WORKDIR /plone
 RUN apt-get update -qqy \
   && buildDeps="build-essential \
         python-dev-is-python2 \
+        python3-pip \
         wget \
         git \
         gcc \
