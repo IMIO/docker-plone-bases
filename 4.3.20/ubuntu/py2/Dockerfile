@@ -15,11 +15,10 @@ COPY buildout.cfg versions-py2.cfg /plone/
 WORKDIR /plone
 RUN apt-get update -qqy \
   && buildDeps="build-essential \
+        python-dev-is-python2 \
         wget \
         git \
         gcc \
-        python2-dev \
-        virtualenv \
         libpq-dev \
         libreadline-dev \
         libc6-dev \
@@ -39,6 +38,7 @@ RUN apt-get update -qqy \
   && sed -ie "s#versions-plone.cfg#https://dist.plone.org/release/$PLONE_VERSION/versions.cfg#" buildout.cfg \
   && chown imio:imio -R /plone \
   && chown imio:imio -R /data \
+  && pip install "virtualenv>=20.7.2" \
   && su -c "virtualenv -p python2 ." -s /bin/sh imio \
   && su -c "bin/pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT" -s /bin/sh imio \
   && su -c "bin/buildout -t 30 -N" -s /bin/sh imio
@@ -50,7 +50,7 @@ COPY --from=builder /usr/local/lib/python2.7/dist-packages /usr/local/lib/python
 WORKDIR /plone
 RUN apt-get update \
   && apt-get install -qqy --no-install-recommends \
-  python2 \
+  python-is-python2 \
   libxml2 \
   libxslt1.1 \
   libpng16-16 \
