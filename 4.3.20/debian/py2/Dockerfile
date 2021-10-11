@@ -46,6 +46,7 @@ FROM imiobe/base:py2-debian-buster
 ENV PIP=20.2.2
 COPY --chown=imio --from=builder /plone/eggs /plone/eggs
 COPY --from=builder /usr/local/lib/python2.7/dist-packages /usr/local/lib/python2.7/dist-packages
+COPY --chown=imio count_users.py /plone/
 WORKDIR /plone
 RUN apt-get update \
   && apt-get install -qqy --no-install-recommends \

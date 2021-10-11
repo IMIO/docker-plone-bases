@@ -25,6 +25,7 @@ RUN buildDeps="build-base wget git gcc libc-dev zlib-dev libjpeg-turbo-dev libpn
 FROM imiobe/base:py3-alpine
 COPY --chown=imio --from=builder /plone/requirements.txt /plone/
 COPY --chown=imio --from=builder /plone/eggs /plone/eggs
+COPY --chown=imio count_users.py /plone/
 WORKDIR /plone
 RUN apk add --no-cache --virtual .run-deps \
   bash \
