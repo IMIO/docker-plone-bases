@@ -47,28 +47,7 @@ jobs:
           tags: imiobe/plone-base:4.3.20-ubuntu
           pull: true
           push: true
-  alpine_5_2_4_py3:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      - name: 5.2.4-alpine
-        uses: docker/build-push-action@v2.5.0
-        with:
-          context: 5.2/5.2.4/alpine/py3/
-          tags: imiobe/plone-base:5.2.4-alpine
-          pull: true
-          push: true
-  alpine_5_2_5_py3:
+  alpine_5_2_6_py3:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -85,7 +64,7 @@ jobs:
       - name: 5.2.5-alpine
         uses: docker/build-push-action@v2.5.0
         with:
-          context: 5.2/5.2.5/alpine/py3/
-          tags: imiobe/plone-base:5.2.5-alpine
+          context: 5.2/5.2.6/alpine/py3/
+          tags: imiobe/plone-base:5.2.6-alpine
           pull: true
           push: true
