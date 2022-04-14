@@ -24,6 +24,7 @@ jobs:
         with:
           context: 4.3.20/debian/py2/
           tags: imiobe/plone-base:4.3.20-debian
+          platforms: linux/amd64
           pull: true
           push: true
   ubuntu_4_3_20_py2:
@@ -45,6 +46,7 @@ jobs:
         with:
           context: 4.3.20/ubuntu/py2/
           tags: imiobe/plone-base:4.3.20-ubuntu
+          platforms: linux/amd64
           pull: true
           push: true
   alpine_5_2_6_py3:
@@ -66,5 +68,6 @@ jobs:
         with:
           context: 5.2/5.2.6/alpine/py3/
           tags: imiobe/plone-base:5.2.6-alpine
+          platforms: linux/amd64
           pull: true
           push: true
