@@ -88,8 +88,8 @@ jobs:
       - name: 5.2.5-alpine
         uses: docker/build-push-action@v2.5.0
         with:
-          context: 5.2/5.2.8/alpine/py3/
-          tags: imiobe/plone-base:5.2.8-alpine
+          context: 5.2/5.2.9/alpine/py3/
+          tags: imiobe/plone-base:5.2.9-alpine
           platforms: linux/amd64
           pull: true
           push: true

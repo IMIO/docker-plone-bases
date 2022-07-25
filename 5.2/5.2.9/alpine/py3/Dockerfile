@@ -1,10 +1,10 @@
 FROM imiobe/base:py3-alpine as builder
 
 ENV PIP=21.1.3 \
-    PLONE_VERSION=5.2.8
+    PLONE_VERSION=5.2.9
 
 LABEL plone=$PLONE_VERSION \
-    name="Plone 5.2.8" \
+    name="Plone 5.2.9" \
     description="Plone image, based on Unified Installer" \
     maintainer="iMio"
 
