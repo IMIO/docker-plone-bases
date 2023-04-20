@@ -25,7 +25,6 @@ RUN apt-get update -qqy \
         libc6-dev \
         libpcre3-dev \
         libssl-dev \
-        libssl-dev \
         libxml2-dev \
         libxslt1-dev \
         libbz2-dev \
@@ -41,7 +40,7 @@ RUN apt-get update -qqy \
   && sed -ie "s#versions-plone.cfg#https://dist.plone.org/release/$PLONE_VERSION/versions.cfg#" buildout.cfg \
   && chown imio:imio -R /plone \
   && chown imio:imio -R /data \
-  && pip install "virtualenv>=20.7.2" \
+  && pip install "virtualenv==20.21.1" \
   && su -c "virtualenv -p python2 ." -s /bin/sh imio \
   && su -c "bin/pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT" -s /bin/sh imio \
   && su -c "bin/buildout -t 30 -N" -s /bin/sh imio
