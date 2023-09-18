@@ -28,7 +28,7 @@ jobs:
           platforms: linux/amd64
           pull: true
           push: true
-  alpine_5_2_9_py3:
+  alpine_5_2_13_py3:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,8 +45,8 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v2.5.0
         with:
-          context: 5.2/5.2.9/alpine/py3/
-          tags: imiobe/plone-base:5.2.9-alpine
+          context: 5.2/5.2.13/alpine/py3/
+          tags: imiobe/plone-base:5.2.13-alpine
           platforms: linux/amd64
           pull: true
           push: true
