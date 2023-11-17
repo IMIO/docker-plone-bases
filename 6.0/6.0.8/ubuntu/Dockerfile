@@ -1,6 +1,6 @@
 FROM imiobe/base:py3-ubuntu-22.04 as builder
 
-ENV PIP=23.2 \
+ENV PIP=23.3.1 \
   ZC_BUILDOUT=3.0.1 \
   SETUPTOOLS=67.6.1 \
   WHEEL=0.40.0 \
