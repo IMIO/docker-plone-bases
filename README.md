@@ -11,7 +11,7 @@ We use `imiobe/base` (https://github.com/IMIO/docker-bases) images as parent.
 + 4.3.20-debian
 + 5.2.9-alpine
 + 5.2.13-alpine
-+ 6.0.7-ubuntu
++ 6.0.8-ubuntu
 
 
 

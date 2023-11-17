@@ -4,10 +4,10 @@ ENV PIP=23.2 \
   ZC_BUILDOUT=3.0.1 \
   SETUPTOOLS=67.6.1 \
   WHEEL=0.40.0 \
-  PLONE_VERSION=6.0.7
+  PLONE_VERSION=6.0.8
 
 LABEL plone=$PLONE_VERSION \
-    name="Plone 6.0.7" \
+    name="Plone 6.0.8" \
     description="Plone image, based on Unified Installer" \
     maintainer="iMio"
 

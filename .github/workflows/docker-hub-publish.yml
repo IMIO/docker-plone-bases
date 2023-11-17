@@ -50,7 +50,7 @@ jobs:
           platforms: linux/amd64
           pull: true
           push: true
-  ubuntu_6_0_7_py3:
+  ubuntu_6_0_8_py3:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -67,8 +67,8 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v2.5.0
         with:
-          context: 6.0/6.0.7/ubuntu
-          tags: imiobe/plone-base:6.0.7-ubuntu
+          context: 6.0/6.0.8/ubuntu
+          tags: imiobe/plone-base:6.0.8-ubuntu
           platforms: linux/amd64
           pull: true
           push: true
