@@ -53,7 +53,7 @@ RUN apk add --no-cache --virtual .run-deps \
   libxslt \
   pcre2 \
   libffi \
-  postgresql12 \
+  postgresql13 \
   libbz2 \
   openjpeg \
   libwebp \
