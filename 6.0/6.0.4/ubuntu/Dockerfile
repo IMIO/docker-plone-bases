@@ -11,7 +11,7 @@ LABEL plone=$PLONE_VERSION \
     name="Plone 6.0.4" \
     description="Plone image, based on Unified Installer" \
     maintainer="iMio"
-
+RUN mkdir -p /plone /data
 COPY buildout.cfg /plone
 WORKDIR /plone
 # hadolint ignore=DL3008
