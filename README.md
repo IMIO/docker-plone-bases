@@ -2,19 +2,16 @@
 
 This repo is used to create base Plone images for iMio organization.
 
-The name of image is `imiobe/plone-base` and we use different tag.
+The name of image is `common/plone-base` and we use different tag.
 
-We use `imiobe/base` (https://github.com/IMIO/docker-bases) images as parent.
+We use `common/base` (https://github.com/IMIO/docker-bases) images as parent.
 
 ## Tags
 + 4.3.20-ubuntu
-+ 4.3.20-debian
-+ 5.2.9-alpine
 + 5.2.13-alpine
 + 6.0.8-ubuntu
-
-
-
++ 6.0.9
++ 6.0.11.1
 
 # License
 

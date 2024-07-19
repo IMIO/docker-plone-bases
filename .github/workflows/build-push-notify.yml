@@ -1,0 +1,96 @@
+name: Update images
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  schedule:
+    - cron: '0 3 * * 0' # Weekly on Sundays at 03:00
+
+env:
+  IMAGE_NAME: common/plone-base
+    
+jobs:
+  ubuntu_4_3_20_py2:
+    runs-on: 
+      group: self-hosted
+    steps:
+      - name: Build push 4.3.20-ubuntu and notify
+        uses: IMIO/gha/build-push-notify@v3.2
+        with:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAGS: |
+            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:4.3.20-ubuntu
+          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
+          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
+          CONTEXT: 4.3.20/ubuntu/py2
+          DOCKERFILE: 4.3.20/ubuntu/py2/Dockerfile
+
+  alpine_5_2_13_py3:
+    runs-on: 
+      group: self-hosted
+    steps:
+      - name: Build push alpine_5_2_13_py3 and notify
+        uses: IMIO/gha/build-push-notify@v3.2
+        with:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAGS: |
+            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:5.2.13-alpine
+          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
+          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
+          CONTEXT: 5.2/5.2.13/alpine/py3
+          DOCKERFILE: 5.2/5.2.13/alpine/py3/Dockerfile
+
+  ubuntu_6_0_8:
+    runs-on: 
+      group: self-hosted
+    steps:
+      - name: Build push ubuntu_6_0_8_py3 and notify
+        uses: IMIO/gha/build-push-notify@v3.2
+        with:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAGS: |
+            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.8-ubuntu
+          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
+          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
+          CONTEXT: 6.0/6.0.8/ubuntu
+          DOCKERFILE: 6.0/6.0.8/ubuntu/Dockerfile
+
+  ubuntu_6_0_9:
+    runs-on: 
+      group: self-hosted
+    steps:
+      - name: Build push ubuntu_6_0_9 and notify
+        uses: IMIO/gha/build-push-notify@v3.2
+        with:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAGS: |
+            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.9
+          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
+          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
+          CONTEXT: 6.0/6.0.9/ubuntu
+          DOCKERFILE: 6.0/6.0.9/ubuntu/Dockerfile
+
+  ubuntu_6_0_11_1:
+    runs-on: 
+      group: self-hosted
+    steps:
+      - name: Build push ubuntu_6_0_11_1 and notify
+        uses: IMIO/gha/build-push-notify@v3.2
+        with:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAGS: |
+            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.11.1
+          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
+          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
+          CONTEXT: 6.0/6.0.11.1/ubuntu
+          DOCKERFILE: 6.0/6.0.11.1/ubuntu/Dockerfile
