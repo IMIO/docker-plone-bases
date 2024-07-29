@@ -1,4 +1,4 @@
-FROM imiobe/base:py2-ubuntu-22.04 as builder
+FROM harbor.imio.be/common/base:py2-ubuntu-22.04 as builder
 
 ENV PIP=20.3.4 \
     PLONE_VERSION=4.3.20 \
@@ -45,7 +45,7 @@ RUN apt-get update -qqy \
   && su -c "bin/pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT" -s /bin/sh imio \
   && su -c "bin/buildout -t 30 -N" -s /bin/sh imio
 
-FROM imiobe/base:py2-ubuntu-22.04
+FROM harbor.imio.be/common/base:py2-ubuntu-22.04
 ENV PIP=20.3.4
 COPY --chown=imio --from=builder /plone/eggs /plone/eggs
 COPY --from=builder /usr/local/lib/python2.7/dist-packages /usr/local/lib/python2.7/dist-packages

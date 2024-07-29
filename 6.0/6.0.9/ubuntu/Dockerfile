@@ -1,4 +1,4 @@
-FROM imiobe/base:py3-ubuntu-22.04 as builder
+FROM harbor.imio.be/common/base:py3-ubuntu-22.04 as builder
 
 ENV PIP=23.3.1 \
   ZC_BUILDOUT=3.0.1 \
@@ -44,7 +44,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && pip install -r requirements.txt \
   && su -c "buildout -t 30 -N" -s /bin/sh imio
 
-FROM imiobe/base:py3-ubuntu-22.04
+FROM harbor.imio.be/common/base:py3-ubuntu-22.04
 COPY --chown=imio --from=builder /plone/requirements.txt /plone/
 COPY --chown=imio --from=builder /plone/eggs /plone/eggs
 WORKDIR /plone
