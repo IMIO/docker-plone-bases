@@ -61,19 +61,19 @@ jobs:
           CONTEXT: 6.0/6.0.9/ubuntu
           DOCKERFILE: 6.0/6.0.9/ubuntu/Dockerfile
 
-  ubuntu_6_0_11_1:
+  ubuntu_6_0_13:
     runs-on: 
       group: self-hosted
     steps:
-      - name: Build push ubuntu_6_0_11_1 and notify
+      - name: Build push ubuntu_6_0_13 and notify
         uses: IMIO/gha/build-push-notify@v3.2
         with:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
           IMAGE_TAGS: |
-            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.11.1
+            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.13
           REGISTRY_URL: ${{ secrets.HARBOR_URL }}
           REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
           MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
-          CONTEXT: 6.0/6.0.11.1/ubuntu
-          DOCKERFILE: 6.0/6.0.11.1/ubuntu/Dockerfile
+          CONTEXT: 6.0/6.0.13/ubuntu
+          DOCKERFILE: 6.0/6.0.13/ubuntu/Dockerfile
