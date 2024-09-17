@@ -1,9 +1,7 @@
 FROM harbor.imio.be/common/base:py3-ubuntu-24.04 AS builder
 
-ENV PIP=24.2 \
-  ZC_BUILDOUT=3.1.0 \
+ENV ZC_BUILDOUT=3.1.0 \
   SETUPTOOLS=74.0.0 \
-  WHEEL=0.44.0 \
   PLONE_VERSION=6.0.13
 
 LABEL plone=$PLONE_VERSION \
@@ -35,10 +33,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   wget \
   zlib1g-dev
 
-RUN pip3 install --no-cache-dir --break-system-packages pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT py-spy \
+RUN pip3 install --no-cache-dir --break-system-packages setuptools==$SETUPTOOLS zc.buildout==$ZC_BUILDOUT py-spy \
   &&  wget -nv https://dist.plone.org/release/$PLONE_VERSION/requirements.txt \
-  && echo "pip==$PIP" | cat - requirements.txt >> tmp.txt \
-  && mv tmp.txt requirements.txt \
   && wget -nv https://dist.plone.org/release/$PLONE_VERSION/versions.cfg \
   && chown imio:imio -R /plone \
   && chown imio:imio -R /data \
