@@ -11,8 +11,7 @@ env:
     
 jobs:
   ubuntu_4_3_20_py2:
-    runs-on: 
-      group: self-hosted
+    runs-on: gha-runners
     steps:
       - name: Build push 4.3.20-ubuntu and notify
         uses: IMIO/gha/build-push-notify@v3.2
@@ -28,8 +27,7 @@ jobs:
           DOCKERFILE: 4.3.20/ubuntu/py2/Dockerfile
 
   ubuntu_6_0_8:
-    runs-on: 
-      group: self-hosted
+    runs-on: gha-runners
     steps:
       - name: Build push ubuntu_6_0_8_py3 and notify
         uses: IMIO/gha/build-push-notify@v3.2
@@ -45,8 +43,7 @@ jobs:
           DOCKERFILE: 6.0/6.0.8/ubuntu/Dockerfile
 
   ubuntu_6_0_9:
-    runs-on: 
-      group: self-hosted
+    runs-on: gha-runners
     steps:
       - name: Build push ubuntu_6_0_9 and notify
         uses: IMIO/gha/build-push-notify@v3.2
@@ -62,8 +59,7 @@ jobs:
           DOCKERFILE: 6.0/6.0.9/ubuntu/Dockerfile
 
   ubuntu_6_0_13:
-    runs-on: 
-      group: self-hosted
+    runs-on: gha-runners
     steps:
       - name: Build push ubuntu_6_0_13 and notify
         uses: IMIO/gha/build-push-notify@v3.2
