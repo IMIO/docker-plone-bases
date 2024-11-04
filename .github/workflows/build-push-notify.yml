@@ -26,22 +26,6 @@ jobs:
           CONTEXT: 4.3.20/ubuntu/py2
           DOCKERFILE: 4.3.20/ubuntu/py2/Dockerfile
 
-  ubuntu_6_0_8:
-    runs-on: gha-runners
-    steps:
-      - name: Build push ubuntu_6_0_8_py3 and notify
-        uses: IMIO/gha/build-push-notify@v3.2
-        with:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAGS: |
-            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.8-ubuntu
-          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
-          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
-          CONTEXT: 6.0/6.0.8/ubuntu
-          DOCKERFILE: 6.0/6.0.8/ubuntu/Dockerfile
-
   ubuntu_6_0_9:
     runs-on: gha-runners
     steps:
