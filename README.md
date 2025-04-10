@@ -8,9 +8,11 @@ We use `common/base` (https://github.com/IMIO/docker-bases) images as parent.
 
 ## Tags
 + 4.3.20-ubuntu
-+ 6.0.8-ubuntu
 + 6.0.9
-+ 6.0.11.1
++ 6.0.13
++ 6.0.14
++ 6.1.0
++ 6.1.1
 
 # License
 
