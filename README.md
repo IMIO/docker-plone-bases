@@ -13,6 +13,7 @@ We use `common/base` (https://github.com/IMIO/docker-bases) images as parent.
 + 6.0.14
 + 6.1.0
 + 6.1.1
++ 6.1.2
 
 # License
 
