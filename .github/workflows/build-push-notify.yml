@@ -10,96 +10,42 @@ env:
   IMAGE_NAME: common/plone-base
 
 jobs:
-  ubuntu_4_3_20_py2:
+  build-push-notify:
     runs-on: gha-runners
+    strategy:
+      matrix:
+        include:
+          - tag: 4.3.20-ubuntu
+            context: 4.3.20/ubuntu/py2
+            dockerfile: 4.3.20/ubuntu/py2/Dockerfile
+          - tag: 6.0.9
+            context: 6.0/6.0.9/ubuntu
+            dockerfile: 6.0/6.0.9/ubuntu/Dockerfile
+          - tag: 6.0.13
+            context: 6.0/6.0.13/ubuntu
+            dockerfile: 6.0/6.0.13/ubuntu/Dockerfile
+          - tag: 6.0.14
+            context: 6.0/6.0.14/ubuntu
+            dockerfile: 6.0/6.0.14/ubuntu/Dockerfile
+          - tag: 6.1.0
+            context: 6.1/6.1.0/ubuntu
+            dockerfile: 6.1/6.1.0/ubuntu/Dockerfile
+          - tag: 6.1.1
+            context: 6.1/6.1.1/ubuntu
+            dockerfile: 6.1/6.1.1/ubuntu/Dockerfile
+          - tag: 6.1.2
+            context: 6.1/6.1.2/ubuntu
+            dockerfile: 6.1/6.1.2/ubuntu/Dockerfile
     steps:
-      - name: Build push 4.3.20-ubuntu and notify
+      - name: Build, push and notify for ${{ matrix.tag }}
         uses: IMIO/gha/build-push-notify@v3.2
         with:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
           IMAGE_TAGS: |
-            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:4.3.20-ubuntu
+            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:${{ matrix.tag }}
           REGISTRY_URL: ${{ secrets.HARBOR_URL }}
           REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
           MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
-          CONTEXT: 4.3.20/ubuntu/py2
-          DOCKERFILE: 4.3.20/ubuntu/py2/Dockerfile
-
-  ubuntu_6_0_9:
-    runs-on: gha-runners
-    steps:
-      - name: Build push ubuntu_6_0_9 and notify
-        uses: IMIO/gha/build-push-notify@v3.2
-        with:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAGS: |
-            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.9
-          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
-          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
-          CONTEXT: 6.0/6.0.9/ubuntu
-          DOCKERFILE: 6.0/6.0.9/ubuntu/Dockerfile
-
-  ubuntu_6_0_13:
-    runs-on: gha-runners
-    steps:
-      - name: Build push ubuntu_6_0_13 and notify
-        uses: IMIO/gha/build-push-notify@v3.2
-        with:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAGS: |
-            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.13
-          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
-          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
-          CONTEXT: 6.0/6.0.13/ubuntu
-          DOCKERFILE: 6.0/6.0.13/ubuntu/Dockerfile
-
-  ubuntu_6_0_14:
-    runs-on: gha-runners
-    steps:
-      - name: Build push ubuntu_6_0_14 and notify
-        uses: IMIO/gha/build-push-notify@v3.2
-        with:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAGS: |
-            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.0.14
-          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
-          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
-          CONTEXT: 6.0/6.0.14/ubuntu
-          DOCKERFILE: 6.0/6.0.14/ubuntu/Dockerfile
-  ubuntu_6_1_0:
-    runs-on: gha-runners
-    steps:
-      - name: Build push ubuntu_6_1_0 and notify
-        uses: IMIO/gha/build-push-notify@v3.2
-        with:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAGS: |
-            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.1.0
-          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
-          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
-          CONTEXT: 6.1/6.1.0/ubuntu
-          DOCKERFILE: 6.1/6.1.0/ubuntu/Dockerfile
-  ubuntu_6_1_1:
-    runs-on: gha-runners
-    steps:
-      - name: Build push ubuntu_6_1_1 and notify
-        uses: IMIO/gha/build-push-notify@v3.2
-        with:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAGS: |
-            ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:6.1.1
-          REGISTRY_URL: ${{ secrets.HARBOR_URL }}
-          REGISTRY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
-          CONTEXT: 6.1/6.1.1/ubuntu
-          DOCKERFILE: 6.1/6.1.1/ubuntu/Dockerfile
+          CONTEXT: ${{ matrix.context }}
+          DOCKERFILE: ${{ matrix.dockerfile }}
