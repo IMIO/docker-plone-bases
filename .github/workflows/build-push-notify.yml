@@ -27,6 +27,9 @@ jobs:
           - tag: 6.0.14
             context: 6.0/6.0.14/ubuntu
             dockerfile: 6.0/6.0.14/ubuntu/Dockerfile
+          - tag: 6.0.15
+            context: 6.0/6.0.15/ubuntu
+            dockerfile: 6.0/6.0.15/ubuntu/Dockerfile
           - tag: 6.1.0
             context: 6.1/6.1.0/ubuntu
             dockerfile: 6.1/6.1.0/ubuntu/Dockerfile
