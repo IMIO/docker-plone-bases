@@ -48,6 +48,9 @@ jobs:
           - tag: 6.1.5
             context: 6.1/6.1.5/ubuntu
             dockerfile: 6.1/6.1.5/ubuntu/Dockerfile
+          - tag: 6.1.5-buildout5
+            context: 6.1/6.1.5-buildout5/ubuntu
+            dockerfile: 6.1/6.1.5-buildout5/ubuntu/Dockerfile
     steps:
       - name: Build, push and notify for ${{ matrix.tag }}
         uses: IMIO/gha/build-push-notify@v3.2
