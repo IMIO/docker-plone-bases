@@ -23,7 +23,16 @@ There is no Makefile or test suite. Validation is done by successfully building 
 1. Create directory `<major>/<version>/ubuntu/`
 2. Add `Dockerfile` — copy from the nearest existing version, update `PLONE_VERSION` and any pinned tool versions (`ZC_BUILDOUT`, `SETUPTOOLS`, `PIP`, `WHEEL`)
 3. Add `buildout.cfg` — copy from another version in the same series (6.0.x or 6.1.x), it's minimal
-4. Add the new entry to `.github/workflows/build-push-notify.yml` in the `matrix.include` list
+4. Nothing to do in CI — the workflow discovers version directories automatically.
+
+The published tag is derived from the directory layout, so the convention is load-bearing:
+
+| Layout | Tag |
+| --- | --- |
+| `<major>/<version>/ubuntu/` | `<version>` (e.g. `6.1/6.1.5/ubuntu/` → `6.1.5`) |
+| `<version>/ubuntu/<py>/` | `<version>-ubuntu` (e.g. `4.3.20/ubuntu/py2/` → `4.3.20-ubuntu`) |
+
+A directory that matches neither shape will be built under a wrong tag with no error, so keep to one of the two.
 
 ## Architecture
 
@@ -40,4 +49,12 @@ There is no Makefile or test suite. Validation is done by successfully building 
 
 ## CI/CD
 
-`.github/workflows/build-push-notify.yml` triggers on push to `master`, manual dispatch, and weekly (Sundays 03:00 UTC). It builds all versions in parallel using the `IMIO/gha/build-push-notify@v3.2` action and pushes to Harbor. Required secrets: `HARBOR_URL`, `COMMON_HARBOR_USERNAME`, `COMMON_HARBOR_PASSWORD`, `COMMON_MATTERMOST_WEBHOOK_URL`.
+`.github/workflows/build-push-notify.yml` triggers on push to `master`, manual dispatch, and weekly (Sundays 03:00 UTC). Three jobs:
+
+- **discover** — derives the build matrix from the directory tree (see the tag table above). On `push` it narrows the matrix to the version directories actually touched; on schedule and manual dispatch it builds everything, so upstream OS patches reach every tag. A change under `.github/workflows/` also forces a full rebuild.
+- **build** — `IMIO/gha/build-push-notify@v8.2.0`, pushes to Harbor and notifies Mattermost. `fail-fast: false`, so one broken version no longer cancels the others.
+- **scan** — `IMIO/gha/trivy-scan-notify@v8.2.0` against each pushed tag, report-only (`FAIL_ON_SEVERITIES: ''`) with SARIF uploaded to Code Scanning. Deliberately non-blocking: a blocking scan would fail the weekly rebuild that is meant to deliver the fix.
+
+Required secrets: `HARBOR_URL`, `COMMON_HARBOR_USERNAME`, `COMMON_HARBOR_PASSWORD`, `COMMON_MATTERMOST_WEBHOOK_URL`.
+
+Note: GitHub disables scheduled workflows after 60 days without a push to the repository, and this repo's history has had longer gaps — so the weekly rebuild cannot be assumed to have run. Trigger it manually if an image needs to be current.

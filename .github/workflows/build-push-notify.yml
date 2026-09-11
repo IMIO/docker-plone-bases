@@ -6,60 +6,96 @@ on:
   schedule:
     - cron: '0 3 * * 0' # Weekly on Sundays at 03:00
 
+permissions:
+  contents: read
+
+# A scheduled run and a push run both resolve to refs/heads/master, so they
+# queue instead of racing. Never cancel in flight: aborting a docker push can
+# leave a partial manifest in Harbor.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   IMAGE_NAME: common/plone-base
 
 jobs:
-  build-push-notify:
+  # Derives the build matrix from the directory tree, so adding a Plone version
+  # is just adding a directory. Tag derivation follows the layout convention:
+  #   <major>/<version>/ubuntu   -> tag = <version>   (6.1/6.1.5/ubuntu -> 6.1.5)
+  #   <version>/ubuntu/<py>      -> tag = <version>-ubuntu (4.3.20/ubuntu/py2 -> 4.3.20-ubuntu)
+  discover:
     runs-on: gha-runners
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+      any: ${{ steps.set.outputs.any }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # git diff below needs the pushed range
+
+      - name: Build matrix
+        id: set
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          # schedule / workflow_dispatch / new branch / force-push: build everything.
+          if [ "$EVENT" != "push" ] || [ -z "$BEFORE" ] \
+             || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] \
+             || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            CHANGED=__ALL__
+          else
+            CHANGED=$(git diff --name-only "$BEFORE" "$SHA")
+            # a workflow change must be revalidated against the whole fleet
+            if printf '%s\n' "$CHANGED" | grep -q '^\.github/workflows/'; then
+              CHANGED=__ALL__
+            fi
+          fi
+
+          sep=""
+          entries=""
+          while read -r ctx; do
+            last=${ctx##*/}
+            rest=${ctx%/*}
+            parent=${rest##*/}
+            first=${ctx%%/*}
+            if [ "$last" = "ubuntu" ]; then tag=$parent; else tag="$first-$parent"; fi
+
+            if [ "$CHANGED" != "__ALL__" ] \
+               && ! printf '%s\n' "$CHANGED" | grep -q "^$ctx/"; then
+              continue
+            fi
+
+            entries="$entries$sep{\"tag\":\"$tag\",\"context\":\"$ctx\",\"dockerfile\":\"$ctx/Dockerfile\"}"
+            sep=","
+          done < <(find . -mindepth 2 -name Dockerfile -printf '%h\n' | sed 's|^\./||' | sort -V)
+
+          echo "matrix={\"include\":[$entries]}" >> "$GITHUB_OUTPUT"
+          if [ -n "$entries" ]; then
+            echo "any=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "any=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "Selected: [$entries]"
+
+  build:
+    needs: discover
+    if: needs.discover.outputs.any == 'true'
+    runs-on: gha-runners
+    timeout-minutes: 30
     strategy:
-      matrix:
-        include:
-          - tag: 4.3.20-ubuntu
-            context: 4.3.20/ubuntu/py2
-            dockerfile: 4.3.20/ubuntu/py2/Dockerfile
-          - tag: 6.0.9
-            context: 6.0/6.0.9/ubuntu
-            dockerfile: 6.0/6.0.9/ubuntu/Dockerfile
-          - tag: 6.0.13
-            context: 6.0/6.0.13/ubuntu
-            dockerfile: 6.0/6.0.13/ubuntu/Dockerfile
-          - tag: 6.0.14
-            context: 6.0/6.0.14/ubuntu
-            dockerfile: 6.0/6.0.14/ubuntu/Dockerfile
-          - tag: 6.0.15
-            context: 6.0/6.0.15/ubuntu
-            dockerfile: 6.0/6.0.15/ubuntu/Dockerfile
-          - tag: 6.1.0
-            context: 6.1/6.1.0/ubuntu
-            dockerfile: 6.1/6.1.0/ubuntu/Dockerfile
-          - tag: 6.1.1
-            context: 6.1/6.1.1/ubuntu
-            dockerfile: 6.1/6.1.1/ubuntu/Dockerfile
-          - tag: 6.1.2
-            context: 6.1/6.1.2/ubuntu
-            dockerfile: 6.1/6.1.2/ubuntu/Dockerfile
-          - tag: 6.1.3
-            context: 6.1/6.1.3/ubuntu
-            dockerfile: 6.1/6.1.3/ubuntu/Dockerfile
-          - tag: 6.1.4
-            context: 6.1/6.1.4/ubuntu
-            dockerfile: 6.1/6.1.4/ubuntu/Dockerfile
-          - tag: 6.1.5
-            context: 6.1/6.1.5/ubuntu
-            dockerfile: 6.1/6.1.5/ubuntu/Dockerfile
-          - tag: 6.1.5-buildout5
-            context: 6.1/6.1.5-buildout5/ubuntu
-            dockerfile: 6.1/6.1.5-buildout5/ubuntu/Dockerfile
-          - tag: 6.2.1
-            context: 6.2/6.2.1/ubuntu
-            dockerfile: 6.2/6.2.1/ubuntu/Dockerfile
-          - tag: 6.2.2
-            context: 6.2/6.2.2/ubuntu
-            dockerfile: 6.2/6.2.2/ubuntu/Dockerfile
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
     steps:
       - name: Build, push and notify for ${{ matrix.tag }}
-        uses: IMIO/gha/build-push-notify@v3.2
+        uses: IMIO/gha/build-push-notify@v8.2.0
         with:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
           IMAGE_TAGS: |
@@ -70,3 +106,30 @@ jobs:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
           CONTEXT: ${{ matrix.context }}
           DOCKERFILE: ${{ matrix.dockerfile }}
+
+  # Report-only on purpose: the weekly rebuild exists to absorb upstream fixes,
+  # so a blocking scan would fail the very run meant to carry the fix and leave
+  # consumers on an older, no-less-vulnerable tag.
+  scan:
+    needs: [ discover, build ]
+    if: needs.discover.outputs.any == 'true'
+    runs-on: gha-runners
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write # SARIF upload to Code Scanning
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    steps:
+      - name: Scan ${{ matrix.tag }}
+        uses: IMIO/gha/trivy-scan-notify@v8.2.0
+        with:
+          SCAN_TYPE: image
+          IMAGE_REF: ${{ secrets.HARBOR_URL }}/${{ env.IMAGE_NAME }}:${{ matrix.tag }}
+          TRIVY_USERNAME: ${{ secrets.COMMON_HARBOR_USERNAME }}
+          TRIVY_PASSWORD: ${{ secrets.COMMON_HARBOR_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
+          FAIL_ON_SEVERITIES: '' # report-only

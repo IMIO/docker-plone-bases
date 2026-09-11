@@ -2,10 +2,10 @@ FROM harbor.imio.be/common/base:py3-ubuntu-24.04 AS builder
 
 ENV ZC_BUILDOUT=3.3 \
   SETUPTOOLS=75.6.0 \
-  PLONE_VERSION=6.0.14
+  PLONE_VERSION=6.0.15
 
 LABEL plone=$PLONE_VERSION \
-    name="Plone 6.0.14" \
+    name="Plone 6.0.15" \
     description="Plone image, based on Unified Installer" \
     maintainer="iMio"
 
