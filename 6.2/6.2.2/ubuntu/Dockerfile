@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libjpeg62-dev \
   libopenjp2-7-dev \
   libmemcached-dev \
-  libpcre3-dev \
+  libpcre2-dev \
   libpq-dev \
   libreadline-dev \
   libssl-dev \
