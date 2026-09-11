@@ -54,6 +54,9 @@ jobs:
           - tag: 6.2.1
             context: 6.2/6.2.1/ubuntu
             dockerfile: 6.2/6.2.1/ubuntu/Dockerfile
+          - tag: 6.2.2
+            context: 6.2/6.2.2/ubuntu
+            dockerfile: 6.2/6.2.2/ubuntu/Dockerfile
     steps:
       - name: Build, push and notify for ${{ matrix.tag }}
         uses: IMIO/gha/build-push-notify@v3.2
