@@ -52,7 +52,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libopenjp2-7 \
   libpq5 \
   libtiff6 \
-  libxml2 \
+  libxml2-16 \
   libxslt1.1 \
   lynx \
   netcat-openbsd \
